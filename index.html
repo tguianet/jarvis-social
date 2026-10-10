@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04091a">
+<meta name="robots" content="noindex, nofollow">
+<title>Jarvis Social</title>
+<style>
+:root{--bg:#04091a;--pn:#0a1a40;--ln:rgba(95,212,255,.22);--ac:#5fd4ff;--txt:#e6f0ff;--mut:#8fb4e8;--ok:#4ade80;--warn:#ffb547;--err:#ff6b7a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:radial-gradient(ellipse at 50% -10%,#0d2a6b 0%,#050c22 55%,#02060f 100%) fixed;color:var(--txt);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:rgba(3,9,26,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--ln);padding:12px 16px calc(10px) 16px;padding-top:max(12px,env(safe-area-inset-top))}
+.top{display:flex;align-items:center;gap:10px}
+.logo{font-weight:800;letter-spacing:3px;color:var(--ac);font-size:16px;flex:1}
+.logo small{display:block;font-weight:500;letter-spacing:2px;color:var(--mut);font-size:10px}
+.ib{background:rgba(95,212,255,.1);border:1px solid var(--ln);border-radius:10px;padding:7px 11px;cursor:pointer}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:2px}
+.tabs button{flex:none;background:transparent;border:1px solid var(--ln);border-radius:999px;padding:6px 12px;color:var(--mut);font-size:13px;cursor:pointer}
+.tabs button.on{background:var(--ac);color:#02101f;border-color:var(--ac);font-weight:700}
+.tabs b{margin-left:4px}
+main{padding:14px 16px 90px;max-width:760px;margin:0 auto}
+.card{background:rgba(10,26,64,.8);border:1px solid var(--ln);border-radius:14px;padding:14px;margin-bottom:12px}
+.post{display:flex;gap:12px;cursor:pointer}
+.thumb{width:84px;aspect-ratio:4/5;border-radius:8px;background:#0b1d47 center/cover no-repeat;flex:none;border:1px solid var(--ln);display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:11px;text-align:center;padding:4px}
+.post .bd{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.mut{color:var(--mut);font-size:13px}
+.st{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid;width:fit-content}
+.st.aguardando_aprovacao,.st.chegando{color:var(--warn);border-color:#7a5a1f}.st.agendado{color:#9fb3ff;border-color:#3a4a9a}.st.aprovado{color:#7fd8ff;border-color:#1f5a7a}
+.st.publicado{color:var(--ok);border-color:#1d6a3a}.st.erro{color:var(--err);border-color:#7a2a33}.st.rejeitado,.st.rascunho{color:#9aa;border-color:#555}.st.publicando{color:#fff;border-color:#888}
+.btn{border:1px solid var(--ln);background:rgba(95,212,255,.12);border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;width:100%}
+.btn.ok{background:#14532d;border-color:#1d6a3a}.btn.no{background:#4a1520;border-color:#7a2a33}
+.row{display:flex;gap:10px}.row>*{flex:1}
+input,select,textarea{width:100%;background:rgba(2,8,24,.8);border:1px solid var(--ln);border-radius:10px;padding:10px 12px;outline:none}
+textarea{min-height:90px;resize:vertical}
+label{display:block;font-size:12px;color:var(--mut);margin:12px 0 5px;font-weight:600}
+.slides{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+.slides img,.slides .ph{width:78%;max-width:340px;aspect-ratio:4/5;object-fit:cover;border-radius:12px;scroll-snap-align:start;flex:none;border:1px solid var(--ln);background:#0b1d47}
+.slides .ph{display:flex;flex-direction:column;justify-content:center;padding:18px;gap:8px}
+.ph b{font-size:18px}
+#det{position:fixed;inset:0;background:var(--bg);z-index:10;overflow:auto;display:none;padding:0 0 100px}
+#det.on{display:block}
+#det .hd{position:sticky;top:0;background:rgba(3,9,26,.95);border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:10px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top))}
+#det .ct{padding:14px 16px;max-width:760px;margin:0 auto}
+.acoes{position:fixed;left:0;right:0;bottom:0;background:rgba(3,9,26,.96);border-top:1px solid var(--ln);padding:10px 16px max(10px,env(safe-area-inset-bottom));display:flex;gap:10px;z-index:11}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;background:#0a2a1a;border:1px solid #1d6a3a;padding:10px 16px;border-radius:10px;display:none;z-index:30;max-width:92vw;text-align:center}
+#toast.err{background:#2a0a12;border-color:#7a2a33}
+.vazio{text-align:center;color:var(--mut);padding:40px 10px}
+.pre{white-space:pre-wrap}
+.fab{position:fixed;right:16px;bottom:max(18px,env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;background:var(--ac);color:#02101f;font-size:28px;font-weight:800;border:0;box-shadow:0 6px 20px rgba(0,0,0,.4);cursor:pointer;z-index:6}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--ac);border-right-color:transparent;border-radius:50%;animation:g .8s linear infinite;vertical-align:-2px}
+@keyframes g{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><div class="logo">JARVIS SOCIAL<small id="sub">posts para aprovar</small></div><button class="ib" id="bRef">↻</button><button class="ib" id="bCfg">⚙</button></div>
+  <div class="tabs" id="tabs"></div>
+</header>
+<main id="main"><div class="vazio"><span class="spin"></span> Carregando…</div></main>
+<button class="fab" id="fab" title="Novo post">+</button>
+<div id="det"></div>
+<div id="toast"></div>
+<script>
+'use strict';
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls = { get(k){ try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+const cfg = { token: ls.get('jarvis_token'), repo: ls.get('jarvis_repo') || 'tguianet/jarvis-posts' };
+let P = [], aba = 'aguardando', filtroMarca = '', blobs = {};
+const ABAS = [['aguardando','Aprovar'],['agendado','Agendados'],['publicado','Publicados'],['erro','Erros'],['todos','Todos']];
+const NOME_TIPO = {post:'Post', carrossel:'Carrossel', story:'Story', reels:'Reels'};
+
+function toast(t, ok = true){ const e = $('toast'); e.textContent = t; e.className = ok ? '' : 'err'; e.style.display = 'block'; clearTimeout(e._t); e._t = setTimeout(() => e.style.display = 'none', 3800); }
+const b64 = (s) => btoa(unescape(encodeURIComponent(s)));
+const unb64 = (s) => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
+
+/* ---------- GitHub ---------- */
+async function gh(caminho, op = {}){
+  const r = await fetch('https://api.github.com/repos/' + cfg.repo + caminho, {...op, headers: {'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(op.headers || {})}, cache: 'no-store'});
+  if (r.status === 401) throw new Error('Token recusado pelo GitHub. Gere outro em ⚙.');
+  if (r.status === 404) throw new Error('Repositório não encontrado (confira o nome e as permissões do token em ⚙).');
+  if (!r.ok) throw new Error('GitHub: ' + r.status);
+  return r;
+}
+async function lerJSON(path){ const r = await gh('/contents/' + encodeURI(path)); const j = await r.json(); return { dados: JSON.parse(unb64(j.content)), sha: j.sha }; }
+async function gravar(path, obj, msg, sha){
+  const corpo = { message: msg, content: b64(JSON.stringify(obj, null, 2) + '\n') };
+  if (sha) corpo.sha = sha;
+  const r = await gh('/contents/' + encodeURI(path), { method: 'PUT', body: JSON.stringify(corpo), headers: {'Content-Type': 'application/json'} });
+  return (await r.json()).content.sha;
+}
+async function imagem(path){
+  if (blobs[path]) return blobs[path];
+  try { const r = await gh('/contents/' + encodeURI(path), { headers: { 'Accept': 'application/vnd.github.raw' } }); blobs[path] = URL.createObjectURL(await r.blob()); return blobs[path]; }
+  catch (e) { return ''; }
+}
+
+async function carregar(){
+  if (!cfg.token) { configurar(); return; }
+  $('main').innerHTML = '<div class="vazio"><span class="spin"></span> Buscando no GitHub…</div>';
+  try {
+    const arv = await (await gh('/git/trees/HEAD?recursive=1')).json();
+    const arqs = arv.tree.filter(t => t.type === 'blob');
+    const posts = arqs.filter(t => /^posts\/.+\.json$/.test(t.path));
+    const status = new Map(arqs.filter(t => /^status\/.+\.json$/.test(t.path)).map(t => [t.path.slice(7, -5), t]));
+    const aprov = new Map(arqs.filter(t => /^aprovacoes\/.+\.json$/.test(t.path)).map(t => [t.path.slice(11, -5), t]));
+    const lotes = [];
+    for (let i = 0; i < posts.length; i += 8) lotes.push(posts.slice(i, i + 8));
+    const out = [];
+    for (const lote of lotes) {
+      out.push(...await Promise.all(lote.map(async t => {
+        try {
+          const { dados } = await lerJSON(t.path);
+          const st = status.has(dados.id) ? (await lerJSON(status.get(dados.id).path)).dados : null;
+          return { ...dados, _path: t.path, _sha: t.sha, _st: st, _ap: aprov.get(dados.id) || null };
+        } catch (e) { return null; }
+      })));
+    }
+    P = out.filter(p => p && /^[a-z0-9][a-z0-9-]{2,79}$/.test(String(p.id || '')) && p.marca).sort((a, b) => String(a._st && a._st.publicar_em || a.publicar_em || '9').localeCompare(String(b._st && b._st.publicar_em || b.publicar_em || '9')));
+    desenhar();
+  } catch (e) { $('main').innerHTML = '<div class="card">' + esc(e.message) + '</div>'; }
+}
+const stDe = (p) => p._st ? p._st.status : 'chegando';
+const stNome = (p) => p._st ? p._st.status_nome : 'Chegando no Jarvis…';
+const quando = (p) => { const q = (p._st && (p._st.status === 'publicado' ? p._st.publicado_em : p._st.publicar_em)) || p.publicar_em; if (!q) return 'sem data'; const d = new Date(q); return d.toLocaleDateString('pt-BR', {weekday:'short', day:'2-digit', month:'2-digit'}) + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}); };
+const naAba = (p) => { const s = stDe(p); return aba === 'todos' || (aba === 'aguardando' && (s === 'aguardando_aprovacao' || s === 'chegando')) || (aba === 'agendado' && (s === 'agendado' || s === 'aprovado' || s === 'publicando')) || s === aba; };
+
+function desenhar(){
+  const n = P.filter(p => ['aguardando_aprovacao','chegando'].includes(stDe(p))).length;
+  $('tabs').innerHTML = ABAS.map(([k, t]) => '<button data-a="' + k + '" class="' + (aba === k ? 'on' : '') + '">' + t + (k === 'aguardando' && n ? '<b>' + n + '</b>' : '') + '</button>').join('') +
+    '<select id="fM" style="width:auto;border-radius:999px;padding:5px 10px;font-size:13px"><option value="">Todas as marcas</option>' + [...new Set(P.map(p => p.marca))].sort().map(m => '<option' + (m === filtroMarca ? ' selected' : '') + '>' + esc(m) + '</option>').join('') + '</select>';
+  $('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { aba = b.dataset.a; desenhar(); });
+  $('fM').onchange = () => { filtroMarca = $('fM').value; desenhar(); };
+  const lista = P.filter(p => naAba(p) && (!filtroMarca || p.marca === filtroMarca));
+  $('main').innerHTML = lista.length ? lista.map((p, i) => '<div class="card post" data-i="' + P.indexOf(p) + '"><div class="thumb" id="th' + P.indexOf(p) + '">' + esc(NOME_TIPO[p.tipo] || '') + '</div><div class="bd"><b>' + esc(p.marca) + ' · ' + esc(NOME_TIPO[p.tipo] || p.tipo) + '</b><div>' + esc(p.tema) + '</div><div class="mut">' + quando(p) + '</div><span class="st ' + esc(stDe(p)) + '">' + esc(stNome(p)) + '</span></div></div>').join('')
+    : '<div class="vazio">' + (aba === 'aguardando' ? 'Nada para aprovar agora. 👍' : 'Nada aqui.') + '</div>';
+  document.querySelectorAll('.post').forEach(e => e.onclick = () => abrir(+e.dataset.i));
+  lista.forEach(async p => { const pv = p._st && p._st.previas && p._st.previas[0]; if (!pv) return; const u = await imagem(pv); const t = $('th' + P.indexOf(p)); if (u && t) { t.style.backgroundImage = 'url("' + u + '")'; t.textContent = ''; } });
+}
+
+async function abrir(i){
+  const p = P[i]; const s = stDe(p); const st = p._st;
+  const travado = ['publicado', 'publicando'].includes(s);
+  const desatualizado = st && st.versao && st.versao !== p._sha;
+  $('det').innerHTML = '<div class="hd"><button class="ib" id="dX">←</button><b style="flex:1">' + esc(p.marca) + ' · ' + esc(NOME_TIPO[p.tipo] || '') + '</b><span class="st ' + esc(s) + '">' + esc(stNome(p)) + '</span></div><div class="ct">' +
+    '<div class="slides" id="sl">' + (p.paginas || []).map((g, k) => '<div class="ph" id="pg' + k + '"><span class="mut">' + (k + 1) + '/' + p.paginas.length + '</span><b>' + esc(g.titulo) + '</b><span>' + esc(g.texto || '') + '</span></div>').join('') + '</div>' +
+    '<p class="mut">' + quando(p) + (st && st.link ? ' · <a style="color:var(--ac)" href="' + esc(st.link) + '" target="_blank" rel="noopener">ver no Instagram ↗</a>' : '') + '</p>' +
+    (st && st.erro ? '<div class="card" style="border-color:#7a2a33;color:#ffc9cf">' + esc(st.erro) + '</div>' : '') +
+    (desatualizado ? '<div class="card" style="border-color:#7a5a1f">O Jarvis ainda não pegou a última versão deste post. Espere ~2 min e toque em ↻ antes de aprovar.</div>' : '') +
+    '<label>Legenda</label>' + (travado ? '<div class="card pre">' + esc(p.legenda) + '</div>' : '<textarea id="eL">' + esc(p.legenda) + '</textarea>') +
+    '<label>Hashtags</label><div class="mut">' + esc((p.hashtags || []).map(t => '#' + t).join(' ')) + '</div>' +
+    (travado ? '' : '<label>Páginas</label>' + (p.paginas || []).map((g, k) => '<div class="card"><input data-k="' + k + '" data-f="titulo" value="' + esc(g.titulo) + '"><textarea data-k="' + k + '" data-f="texto" style="min-height:60px;margin-top:8px">' + esc(g.texto || '') + '</textarea></div>').join('') +
+      '<button class="btn" id="eS">Salvar alterações</button><p class="mut">Salvar manda a nova versão ao Jarvis; ela volta para aprovação.</p>' +
+      (s !== 'rejeitado' ? '<label>Motivo, se for rejeitar (opcional)</label><input id="eM" placeholder="ex.: muito genérico">' : '')) +
+    '</div>' + (travado || !st ? '' : '<div class="acoes">' + (s === 'aguardando_aprovacao' ? '<button class="btn ok" id="eOk">✔ Aprovar</button>' : '') + (s !== 'rejeitado' ? '<button class="btn no" id="eNo">✕ Rejeitar</button>' : '') + '</div>');
+  $('det').classList.add('on');
+  $('dX').onclick = () => $('det').classList.remove('on');
+  (st && st.previas || []).forEach(async (pv, k) => { const u = await imagem(pv); const ph = $('pg' + k); if (u && ph) { const im = document.createElement('img'); im.src = u; ph.replaceWith(im); } });
+  if (travado) return;
+  const decidir = async (decisao) => {
+    if (desatualizado) { toast('Espere o Jarvis pegar a versão nova (↻).', false); return; }
+    try {
+      let sha = null; if (p._ap) sha = p._ap.sha;
+      await gravar('aprovacoes/' + p.id + '.json', { id: p.id, decisao, versao: p._sha, motivo: decisao === 'rejeitado' && $('eM') ? $('eM').value : '', em: new Date().toISOString(), por: 'celular' },
+        (decisao === 'aprovado' ? 'Aprovado' : 'Rejeitado') + ' pelo celular: ' + p.id, sha);
+      toast(decisao === 'aprovado' ? 'Aprovado! O Jarvis agenda em até 2 min.' : 'Rejeitado.');
+      $('det').classList.remove('on'); setTimeout(carregar, 800);
+    } catch (e) { toast(e.message, false); }
+  };
+  if ($('eOk')) $('eOk').onclick = () => decidir('aprovado');
+  if ($('eNo')) $('eNo').onclick = () => decidir('rejeitado');
+  $('eS').onclick = async () => {
+    const novo = JSON.parse(JSON.stringify(p)); ['_path', '_sha', '_st', '_ap'].forEach(k => delete novo[k]);
+    novo.legenda = $('eL').value;
+    document.querySelectorAll('#det [data-k]').forEach(el => { novo.paginas[+el.dataset.k][el.dataset.f] = el.value; });
+    try { await gravar(p._path, novo, 'Editado no celular: ' + p.id, p._sha); toast('Salvo. O Jarvis atualiza em até 2 min.'); $('det').classList.remove('on'); setTimeout(carregar, 800); }
+    catch (e) { toast(e.message, false); }
+  };
+}
+
+function novoPost(){
+  const marcas = [...new Set(P.map(p => p.marca))].sort();
+  const amanha = new Date(Date.now() + 864e5); amanha.setHours(19, 0, 0, 0);
+  const z = (n) => String(n).padStart(2, '0');
+  const v = amanha.getFullYear() + '-' + z(amanha.getMonth() + 1) + '-' + z(amanha.getDate()) + 'T19:00';
+  $('det').innerHTML = '<div class="hd"><button class="ib" id="dX">←</button><b>Novo post</b></div><div class="ct">' +
+    '<label>Marca</label><input id="nMa" list="lm" value="' + esc(marcas[0] || '') + '"><datalist id="lm">' + marcas.map(m => '<option value="' + esc(m) + '">').join('') + '</datalist>' +
+    '<div class="row"><div><label>Tipo</label><select id="nT"><option value="carrossel">Carrossel</option><option value="post">Post</option><option value="story">Story</option></select></div><div><label>Publicar em</label><input id="nQ" type="datetime-local" value="' + v + '"></div></div>' +
+    '<label>Tema</label><input id="nTe" placeholder="ex.: como escolher alianças">' +
+    '<label>Páginas (uma por linha: Título | texto)</label><textarea id="nP" style="min-height:140px" placeholder="Ouro 18k dura gerações | Não escurece e aguenta o uso diário\nMeça o dedo à tarde | Os dedos incham ao longo do dia"></textarea>' +
+    '<label>Legenda</label><textarea id="nL"></textarea><label>Hashtags (separadas por espaço)</label><input id="nH" placeholder="aliancas noivado joias">' +
+    '<button class="btn ok" id="nS" style="margin-top:14px">Enviar para o Jarvis</button><p class="mut">Chega no Jarvis como aguardando aprovação.</p></div>';
+  $('det').classList.add('on'); $('dX').onclick = () => $('det').classList.remove('on');
+  $('nS').onclick = async () => {
+    const marca = $('nMa').value.trim(), tema = $('nTe').value.trim();
+    const paginas = $('nP').value.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [t, ...r] = l.split('|'); return { titulo: t.trim(), texto: r.join('|').trim() }; });
+    if (!marca || !tema || !paginas.length) { toast('Preencha marca, tema e páginas.', false); return; }
+    if ($('nT').value === 'carrossel' && (paginas.length < 2 || paginas.length > 10)) { toast('Carrossel: de 2 a 10 páginas.', false); return; }
+    const sl = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30);
+    const id = (sl(marca) + '-' + sl(tema) + '-' + Date.now().toString(36)).slice(0, 80);
+    const post = { id, marca, tipo: $('nT').value, rede: 'instagram', tema, paginas, legenda: $('nL').value, hashtags: $('nH').value.split(/[\s,]+/).map(t => t.replace(/^#/, '')).filter(Boolean), cta: '', publicar_em: $('nQ').value || null, criado_por: 'celular', criado_em: new Date().toISOString() };
+    try { await gravar('posts/entrada/' + id + '.json', post, 'Novo post pelo celular: ' + id); toast('Enviado! Aparece no Jarvis em até 2 min.'); $('det').classList.remove('on'); setTimeout(carregar, 800); }
+    catch (e) { toast(e.message, false); }
+  };
+}
+
+function configurar(){
+  $('det').innerHTML = '<div class="hd">' + (cfg.token ? '<button class="ib" id="dX">←</button>' : '') + '<b>Configurar</b></div><div class="ct">' +
+    '<p>Este app lê e grava no seu repositório <b>privado</b> de posts no GitHub. A chave fica <b>só neste celular</b>.</p>' +
+    '<label>Repositório</label><input id="cR" value="' + esc(cfg.repo) + '">' +
+    '<label>Token do GitHub (fine-grained, só esse repositório, permissão "Contents: Read and write")</label><input id="cT" type="password" autocomplete="off" placeholder="github_pat_…">' +
+    '<button class="btn ok" id="cS" style="margin-top:14px">Salvar</button>' +
+    '<p class="mut">Criar o token: github.com → Settings → Developer settings → Fine-grained tokens → Generate. Em "Repository access" escolha só o jarvis-posts; em "Permissions → Contents" escolha Read and write.</p>' +
+    (cfg.token ? '<button class="btn no" id="cSair" style="margin-top:10px">Apagar a chave deste celular</button>' : '') + '</div>';
+  $('det').classList.add('on');
+  if ($('dX')) $('dX').onclick = () => $('det').classList.remove('on');
+  $('cS').onclick = () => { const t = $('cT').value.trim(); cfg.repo = $('cR').value.trim(); if (t) cfg.token = t; ls.set('jarvis_repo', cfg.repo); if (t) ls.set('jarvis_token', t); $('det').classList.remove('on'); carregar(); };
+  if ($('cSair')) $('cSair').onclick = () => { try { localStorage.removeItem('jarvis_token'); } catch (e) {} cfg.token = ''; configurar(); };
+}
+
+$('bRef').onclick = carregar; $('bCfg').onclick = configurar; $('fab').onclick = novoPost;
+carregar();
+</script>
+</body>
+</html>
