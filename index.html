@@ -212,6 +212,8 @@ function configurar(){
     '<label>Repositório</label><input id="cR" value="' + esc(cfg.repo) + '">' +
     '<label>Token do GitHub (fine-grained, só esse repositório, permissão "Contents: Read and write")</label><input id="cT" type="password" autocomplete="off" placeholder="github_pat_…">' +
     '<button class="btn ok" id="cS" style="margin-top:14px">Salvar</button>' +
+    '<a class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:10px" target="_blank" rel="noopener" href="https://github.com/settings/personal-access-tokens/new?name=Jarvis%20celular&description=App%20Jarvis%20Social&expires_in=365&contents=write">1) Criar token no GitHub ↗</a>' +
+    '<p class="mut">Na página que abrir: em <b>Repository access</b> toque em <b>Only select repositories</b> e escolha <b>jarvis-posts</b>; confira <b>Contents: Read and write</b>; toque em <b>Generate token</b>, copie e volte aqui para colar.</p>' +
     '<p class="mut">Criar o token: github.com → Settings → Developer settings → Fine-grained tokens → Generate. Em "Repository access" escolha só o jarvis-posts; em "Permissions → Contents" escolha Read and write.</p>' +
     (cfg.token ? '<button class="btn no" id="cSair" style="margin-top:10px">Apagar a chave deste celular</button>' : '') + '</div>';
   $('det').classList.add('on');
